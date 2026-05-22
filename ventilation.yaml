@@ -1,0 +1,102 @@
+substitutions:
+  name: ventilation
+  friendly_name: Ventilation Modbus
+  modbus_slave_id: "10"
+  baud_rate: 19200
+  temperature_scaling: 10
+  min_temp: 12
+  max_temp: 22
+
+esphome:
+  name: ${name}
+  friendly_name: ${friendly_name}
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+api:
+  encryption:
+    key: "TY6c1QahDGuxl0fVFFYqjQV/TO0okbkhtNb8vnlpaSM="
+
+esp32:
+  board: esp32dev
+  framework:
+    type: esp-idf
+
+ota:
+  - platform: esphome
+
+web_server:
+  version: 3
+
+logger:
+
+uart:
+  id: rs485_uart
+  tx_pin: GPIO22
+  rx_pin: GPIO21
+  baud_rate: ${baud_rate}
+  stop_bits: 1
+  parity: NONE
+
+modbus:
+  id: modbus_bus
+  uart_id: rs485_uart
+  flow_control_pin: GPIO17
+  send_wait_time: 200ms
+
+modbus_controller:
+  - id: ventilation
+    address: ${modbus_slave_id}
+    modbus_id: modbus_bus
+    update_interval: 10s
+
+external_components:
+  - source:
+      type: local
+      path: components
+    components: [ventilation_climate]
+
+climate:
+  - platform: ventilation_climate
+    name: "Ventilation"
+    modbus_controller_id: ventilation
+    min_temp: ${min_temp}
+    max_temp: ${max_temp}
+    target_temp_step: 1
+
+sensor:
+  # Register 600
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: replacement_time_months
+    name: "Replacement Time In Months"
+    address: 600
+    register_type: holding
+    value_type: U_WORD
+    unit_of_measurement: "months"
+    accuracy_decimals: 0
+
+  # Register 601
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: elapsed_days_filter_change
+    name: "Elapsed Days Since Filter Change"
+    address: 601
+    register_type: holding
+    value_type: U_WORD
+    unit_of_measurement: "days"
+    accuracy_decimals: 0
+
+binary_sensor:
+  - platform: template
+    name: "Filter Needs Changing"
+    id: filter_needs_changing
+    lambda: |-
+      if (isnan(id(replacement_time_months).state) ||
+          isnan(id(elapsed_days_filter_change).state)) {
+        return {};
+      }
+      return id(elapsed_days_filter_change).state >
+             id(replacement_time_months).state * 30.0;
