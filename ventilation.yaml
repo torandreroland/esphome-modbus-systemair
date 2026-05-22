@@ -15,10 +15,6 @@ wifi:
   ssid: !secret wifi_ssid
   password: !secret wifi_password
 
-api:
-  encryption:
-    key: "TY6c1QahDGuxl0fVFFYqjQV/TO0okbkhtNb8vnlpaSM="
-
 esp32:
   board: esp32dev
   framework:
@@ -54,8 +50,8 @@ modbus_controller:
 
 external_components:
   - source:
-      type: local
-      path: components
+      type: git
+      url: https://github.com/torandreroland/esphome-modbus-systemair.git
     components: [ventilation_climate]
 
 climate:
