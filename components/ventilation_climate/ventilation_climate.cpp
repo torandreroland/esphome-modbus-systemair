@@ -12,7 +12,7 @@ namespace esphome
     static const char *const TAG = "ventilation_climate";
 
     static constexpr uint16_t REGISTER_FAN_SPEED = 100;
-    static constexpr uint16_t REGISTER_TARGET_TEMPERATURE_WRITE = 207;
+    static constexpr uint16_t REGISTER_TARGET_TEMPERATURE_WRITE = 206;
 
     VentilationClimate::RegisterItem::RegisterItem(VentilationClimate *owner, RegisterKind kind, uint16_t address)
         : owner_(owner), kind_(kind)
