@@ -16,7 +16,7 @@ wifi:
   password: !secret wifi_password
 
 esp32:
-  board: esp32dev
+  variant: esp32
   framework:
     type: esp-idf
 
@@ -63,36 +63,543 @@ climate:
     target_temp_step: 1
 
 sensor:
+  # Register 110
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: speed_supply_fan
+    name: "Speed Supply Fan"
+    address: 110
+    register_type: holding
+    value_type: U_WORD
+    unit_of_measurement: "rpm"
+    accuracy_decimals: 0
+    state_class: measurement
+
+  # Register 111
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: speed_exhaust_fan
+    name: "Speed Exhaust Fan"
+    address: 111
+    register_type: holding
+    value_type: U_WORD
+    unit_of_measurement: "rpm"
+    accuracy_decimals: 0
+    state_class: measurement
+
+  # Register 213
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: temperature_supply_air
+    name: "Temperature Supply Air"
+    address: 213
+    register_type: holding
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    accuracy_decimals: 1
+    state_class: measurement
+    filters:
+      - lambda: return x / ${temperature_scaling};
+
+  # Register 214
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: temperature_extract_air
+    name: "Temperature Extract Air"
+    address: 214
+    register_type: holding
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    accuracy_decimals: 1
+    state_class: measurement
+    filters:
+      - lambda: return x / ${temperature_scaling};
+
+  # Register 215
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: temperature_exhaust_air
+    name: "Temperature Exhaust Air"
+    address: 215
+    register_type: holding
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    accuracy_decimals: 1
+    state_class: measurement
+    filters:
+      - lambda: return x / ${temperature_scaling};
+
+  # Register 216
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: temperature_overheating_frostprotection
+    name: "Temperature Overheating Frostprotection"
+    address: 216
+    register_type: holding
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    accuracy_decimals: 1
+    state_class: measurement
+    filters:
+      - lambda: return x / ${temperature_scaling};
+
+  # Register 217
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: temperature_outdoor_air
+    name: "Temperature Outdoor Air"
+    address: 217
+    register_type: holding
+    value_type: S_WORD
+    unit_of_measurement: "°C"
+    device_class: temperature
+    accuracy_decimals: 1
+    state_class: measurement
+    filters:
+      - lambda: return x / ${temperature_scaling};
+
+  # Register 219
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: heater_type
+    name: "Heater Type Code"
+    address: 219
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    internal: true
+
+  # Register 351
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: rotor_state
+    name: "Rotor State Code"
+    address: 351
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    internal: true
+
+  # Register 500
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: system_type
+    name: "System Type Code"
+    address: 500
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    internal: true
+
+  # Register 501
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: main_program_major
+    name: "Main Program Major Code"
+    address: 501
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    internal: true
+
+  # Register 502
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: main_program_minor
+    name: "Main Program Minor Code"
+    address: 502
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    internal: true
+
+  # Register 503
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: main_program_patch
+    name: "Main Program Patch Code"
+    address: 503
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    internal: true
+
+  # Register 504
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: boot_program_major
+    name: "Boot Program Major Code"
+    address: 504
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    internal: true
+
+  # Register 505
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: boot_program_minor
+    name: "Boot Program Minor Code"
+    address: 505
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    internal: true
+
+  # Register 506
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: boot_program_patch
+    name: "Boot Program Patch Code"
+    address: 506
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    internal: true
+
   # Register 600
   - platform: modbus_controller
     modbus_controller_id: ventilation
-    id: replacement_time_months
-    name: "Replacement Time In Months"
+    id: filter_replacement_interval
+    name: "Filter Replacement Interval"
     address: 600
     register_type: holding
     value_type: U_WORD
     unit_of_measurement: "months"
     accuracy_decimals: 0
+    entity_category: diagnostic
 
   # Register 601
   - platform: modbus_controller
     modbus_controller_id: ventilation
-    id: elapsed_days_filter_change
-    name: "Elapsed Days Since Filter Change"
+    id: filter_used_time
+    name: "Filter Used Time"
     address: 601
     register_type: holding
     value_type: U_WORD
     unit_of_measurement: "days"
     accuracy_decimals: 0
+    entity_category: diagnostic
+
+  # Register 650
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: vtc_defrosting_state
+    name: "VTC Defrosting State Code"
+    address: 650
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    internal: true
+
+  # Register 670
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: vr_defrosting_state
+    name: "VR Defrosting State Code"
+    address: 670
+    register_type: holding
+    value_type: U_WORD
+    accuracy_decimals: 0
+    entity_category: diagnostic
+    internal: true
+
+text_sensor:
+  - platform: template
+    name: "Rotor State"
+    id: rotor_state_text
+    entity_category: diagnostic
+    update_interval: 10s
+    lambda: |-
+      if (isnan(id(rotor_state).state)) {
+        return {};
+      }
+
+      switch (static_cast<uint16_t>(id(rotor_state).state)) {
+        case 0:
+          return std::string("Normal");
+        case 1:
+          return std::string("Rotor fault assumed");
+        case 2:
+          return std::string("Rotor fault detected");
+        case 3:
+          return std::string("Summer mode conditions valid, but summer mode not yet active");
+        case 4:
+          return std::string("Summer mode");
+        case 5:
+          return std::string("Waiting to go out of manual summer mode due to temperature conditions");
+        case 6:
+          return std::string("Manual summer mode");
+        case 7:
+          return std::string("Rotor cleaning during summer mode");
+        case 8:
+          return std::string("Rotor cleaning during manual summer mode");
+        case 9:
+          return std::string("Fans off");
+        case 10:
+          return std::string("Rotor cleaning during fans off");
+        case 11:
+          return std::string("Rotor fault, conditions for rotor fault not valid anymore");
+        default:
+          return std::string("Unknown");
+      }
+
+  - platform: template
+    name: "VTC Defrosting State"
+    id: vtc_defrosting_state_text
+    entity_category: diagnostic
+    update_interval: 10s
+    lambda: |-
+      if (isnan(id(vtc_defrosting_state).state)) {
+        return {};
+      }
+
+      switch (static_cast<uint16_t>(id(vtc_defrosting_state).state)) {
+        case 0:
+          return std::string("No defrosting ongoing");
+        case 2:
+          return std::string("Bypass defrosting");
+        case 3:
+          return std::string("Stop defrosting");
+        case 4:
+          return std::string("Defrost error");
+        default:
+          return std::string("Unknown");
+      }
+
+  - platform: template
+    name: "VR Defrosting State"
+    id: vr_defrosting_state_text
+    entity_category: diagnostic
+    update_interval: 10s
+    lambda: |-
+      if (isnan(id(vr_defrosting_state).state)) {
+        return {};
+      }
+
+      switch (static_cast<uint16_t>(id(vr_defrosting_state).state)) {
+        case 0:
+          return std::string("Inactive");
+        case 1:
+          return std::string("Low temperature");
+        case 2:
+          return std::string("Defrosting");
+        default:
+          return std::string("Unknown");
+      }
+
+  - platform: template
+    name: "System Type"
+    id: system_type_text
+    entity_category: diagnostic
+    update_interval: 10s
+    lambda: |-
+      if (isnan(id(system_type).state)) {
+        return {};
+      }
+
+      switch (static_cast<uint16_t>(id(system_type).state)) {
+        case 0:
+          return std::string("VR400");
+        case 1:
+          return std::string("VR700");
+        case 2:
+          return std::string("VR700DK");
+        case 3:
+          return std::string("VR400DE");
+        case 4:
+          return std::string("VTC300");
+        case 5:
+          return std::string("VTC700");
+        case 12:
+          return std::string("VTR150K");
+        case 13:
+          return std::string("VTR200B");
+        case 14:
+          return std::string("VSR300");
+        case 15:
+          return std::string("VSR500");
+        case 16:
+          return std::string("VSR150");
+        case 17:
+          return std::string("VTR300");
+        case 18:
+          return std::string("VTR500");
+        case 19:
+          return std::string("VSR300DE");
+        case 20:
+          return std::string("VTC200");
+        default:
+          return {};
+      }
+
+  - platform: template
+    name: "Heater Type"
+    id: heater_type_text
+    entity_category: diagnostic
+    update_interval: 10s
+    lambda: |-
+      if (isnan(id(heater_type).state)) {
+        return {};
+      }
+
+      switch (static_cast<uint16_t>(id(heater_type).state)) {
+        case 0:
+          return std::string("No Heater");
+        case 1:
+          return std::string("Electrical Heater");
+        default:
+          return std::string("Unknown");
+      }
+
+  - platform: template
+    name: "Version Main Program"
+    id: version_main_program
+    entity_category: diagnostic
+    update_interval: 10s
+    lambda: |-
+      if (isnan(id(main_program_major).state) ||
+          isnan(id(main_program_minor).state) ||
+          isnan(id(main_program_patch).state)) {
+        return {};
+      }
+
+      char version[18];
+      snprintf(version, sizeof(version), "%u.%u.%u",
+               static_cast<uint16_t>(id(main_program_major).state),
+               static_cast<uint16_t>(id(main_program_minor).state),
+               static_cast<uint16_t>(id(main_program_patch).state));
+      return std::string(version);
+
+  - platform: template
+    name: "Version Boot Program"
+    id: version_boot_program
+    entity_category: diagnostic
+    update_interval: 10s
+    lambda: |-
+      if (isnan(id(boot_program_major).state) ||
+          isnan(id(boot_program_minor).state) ||
+          isnan(id(boot_program_patch).state)) {
+        return {};
+      }
+
+      char version[18];
+      snprintf(version, sizeof(version), "%u.%u.%u",
+               static_cast<uint16_t>(id(boot_program_major).state),
+               static_cast<uint16_t>(id(boot_program_minor).state),
+               static_cast<uint16_t>(id(boot_program_patch).state));
+      return std::string(version);
 
 binary_sensor:
+  # Register 800, coil 12801
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: filter_alarm
+    name: "Alarm Filter"
+    address: 800
+    register_type: holding
+    bitmask: 0x0001
+    device_class: problem
+    entity_category: diagnostic
+
+  # Register 800, coil 12802
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: fan_alarm
+    name: "Alarm Fan"
+    address: 800
+    register_type: holding
+    bitmask: 0x0002
+    device_class: problem
+    entity_category: diagnostic
+
+  # Register 800, coil 12804
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: rotor_alarm
+    name: "Alarm Rotor"
+    address: 800
+    register_type: holding
+    bitmask: 0x0008
+    device_class: problem
+    entity_category: diagnostic
+
+  # Register 800, coil 12805
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: frost_alarm
+    name: "Alarm Frost"
+    address: 800
+    register_type: holding
+    bitmask: 0x0010
+    device_class: problem
+    entity_category: diagnostic
+
+  # Register 800, coil 12806
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: pcu_pb_alarm
+    name: "Alarm PCU-PB"
+    address: 800
+    register_type: holding
+    bitmask: 0x0020
+    device_class: problem
+    entity_category: diagnostic
+
+  # Register 800, coil 12807
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: temperature_sensor_alarm
+    name: "Alarm Temperature Sensor"
+    address: 800
+    register_type: holding
+    bitmask: 0x0040
+    device_class: problem
+    entity_category: diagnostic
+
+  # Register 800, coil 12808
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: emergency_thermostat_alarm
+    name: "Alarm Emergency Thermostat"
+    address: 800
+    register_type: holding
+    bitmask: 0x0080
+    device_class: problem
+    entity_category: diagnostic
+
+  # Register 800, coil 12809
+  - platform: modbus_controller
+    modbus_controller_id: ventilation
+    id: damper_alarm
+    name: "Alarm Damper"
+    address: 800
+    register_type: holding
+    bitmask: 0x0100
+    device_class: problem
+    entity_category: diagnostic
+
   - platform: template
     name: "Filter Needs Changing"
     id: filter_needs_changing
     lambda: |-
-      if (isnan(id(replacement_time_months).state) ||
-          isnan(id(elapsed_days_filter_change).state)) {
+      if (isnan(id(filter_replacement_interval).state) ||
+          isnan(id(filter_used_time).state)) {
         return {};
       }
-      return id(elapsed_days_filter_change).state >
-             id(replacement_time_months).state * 30.0;
+      return id(filter_used_time).state >
+             id(filter_replacement_interval).state * 30.0;
