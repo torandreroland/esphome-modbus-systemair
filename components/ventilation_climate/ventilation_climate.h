@@ -66,7 +66,7 @@ namespace esphome
 
       RegisterItem fan_speed_item_{this, RegisterKind::FAN_SPEED, 100};
       RegisterItem target_temperature_item_{this, RegisterKind::TARGET_TEMPERATURE, 207};
-      RegisterItem current_temperature_item_{this, RegisterKind::CURRENT_TEMPERATURE, 217};
+      RegisterItem current_temperature_item_{this, RegisterKind::CURRENT_TEMPERATURE, 213};
       RegisterItem rotor_relay_item_{this, RegisterKind::ROTOR_RELAY, 351};
     };
 
