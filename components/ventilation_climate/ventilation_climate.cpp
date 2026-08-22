@@ -17,7 +17,7 @@ namespace esphome
     VentilationClimate::RegisterItem::RegisterItem(VentilationClimate *owner, RegisterKind kind, uint16_t address)
         : owner_(owner), kind_(kind)
     {
-      this->register_type = modbus::ModbusRegisterType::HOLDING;
+      this->register_type = modbus::EntityType::HOLDING;
       this->sensor_value_type = modbus::helpers::SensorValueType::U_WORD;
       this->start_address = address;
       this->bitmask = 0xFFFFFFFF;
@@ -27,9 +27,9 @@ namespace esphome
       this->force_new_range = false;
     }
 
-    void VentilationClimate::RegisterItem::parse_and_publish(const std::vector<uint8_t> &data)
+    void VentilationClimate::RegisterItem::parse_and_publish(std::span<const uint8_t> data)
     {
-      auto raw = static_cast<uint16_t>(modbus_controller::payload_to_float(data, *this));
+      auto raw = static_cast<uint16_t>(modbus_controller::payload_to_float(data, *this, this->offset));
       this->owner_->parse_register_(this->kind_, raw);
     }
 
@@ -227,13 +227,8 @@ namespace esphome
       if (this->parent_ == nullptr)
         return;
 
-      auto command = modbus_controller::ModbusCommandItem::create_write_single_command(this->parent_, address, value);
-      command.on_data_func = [this, command](modbus::ModbusRegisterType register_type, uint16_t start_address,
-                                             const std::vector<uint8_t> &data)
-      {
-        this->parent_->on_write_register_response(command.register_type, start_address, data);
-      };
-      this->parent_->queue_command(command);
+      this->parent_->queue_command(
+          modbus_controller::ModbusCommandItem::create_write_single_command(this->parent_, address, value));
     }
 
   } // namespace ventilation_climate

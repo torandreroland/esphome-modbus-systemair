@@ -38,7 +38,7 @@ namespace esphome
       public:
         RegisterItem(VentilationClimate *owner, RegisterKind kind, uint16_t address);
 
-        void parse_and_publish(const std::vector<uint8_t> &data) override;
+        void parse_and_publish(std::span<const uint8_t> data) override;
 
       protected:
         VentilationClimate *owner_;
