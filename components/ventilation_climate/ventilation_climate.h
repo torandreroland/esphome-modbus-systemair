@@ -9,13 +9,19 @@ namespace esphome
   namespace ventilation_climate
   {
 
-    class VentilationClimate : public climate::Climate, public Component
+    class VentilationClimate : public climate::Climate,
+                               public Component,
+                               public modbus_controller::WriterEntity
     {
     public:
       void setup() override;
       void dump_config() override;
 
-      void set_parent(modbus_controller::ModbusController *parent) { this->parent_ = parent; }
+      void set_parent(modbus_controller::ModbusController *parent)
+      {
+        this->parent_ = parent;
+        this->set_controller_(parent);
+      }
       void register_modbus_items(modbus_controller::ModbusController *parent);
       void set_min_temperature(float min_temperature) { this->min_temperature_ = min_temperature; }
       void set_max_temperature(float max_temperature) { this->max_temperature_ = max_temperature; }

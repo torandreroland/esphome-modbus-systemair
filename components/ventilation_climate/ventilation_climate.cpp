@@ -19,12 +19,9 @@ namespace esphome
     {
       this->register_type = modbus::EntityType::HOLDING;
       this->sensor_value_type = modbus::helpers::SensorValueType::U_WORD;
-      this->start_address = address;
+      this->set_address(address);
+      this->set_offset_from_start_address(0);
       this->bitmask = 0xFFFFFFFF;
-      this->offset = 0;
-      this->register_count = 1;
-      this->skip_updates = 0;
-      this->force_new_range = false;
     }
 
     void VentilationClimate::RegisterItem::parse_and_publish(std::span<const uint8_t> data)
@@ -227,8 +224,8 @@ namespace esphome
       if (this->parent_ == nullptr)
         return;
 
-      this->parent_->queue_command(
-          modbus_controller::ModbusCommandItem::create_write_single_command(this->parent_, address, value));
+      if (!this->write_single_register(address, value))
+        ESP_LOGW(TAG, "Modbus write was refused by the hub");
     }
 
   } // namespace ventilation_climate
